@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+ <head>
+      <meta charset="utf-8">
+      <link rel= "stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css"/>
+      <script src="//code.angularjs.org/1.4.1/angular.js"></script>
+   </head>
+   <body>
+<style>
+button{
+    width:40px;
+    height:40px;
+}
+input{
+   text-align:right;
+}
+#zerobtn{
+    width:84px;
+}
+#clearbtn{
+    padding:0;
+}
+#fakeHardware{
+   float:left;
+   margin-right: 20px;
+}
+
+</style>
+
+<div ng-app="calculatorApp">
+    <div ng-controller="calculatorCtrl">
+        <div id="fakeHardware">
+           <form name="calculator">
+               <div> 
+                   <input type="text" ng-disabled=true ng-model="calcValue"/>
+                   <button ng-click="calculateIt('=')">=</button>
+               </div>
+               <div> 
+                    <div>
+                        <button ng-click="updateInput('7')">7</button>
+                        <button ng-click="updateInput('8')">8</button>
+                        <button ng-click="updateInput('9')">9</button>
+                        <button ng-click="calculateIt('/')"><strong>&divide;</strong></button>
+                   </div>          
+                   <div>
+                       <button ng-click="updateInput('4')">4</button>
+                       <button ng-click="updateInput('5')">5</button>
+                       <button ng-click="updateInput('6')">6</button>
+                       <button ng-click="calculateIt('*')"><i class="fa fa-times"></i></button>
+                  </div>
+                   <div>
+                       <button ng-click="updateInput('1')">1</button>
+                       <button ng-click="updateInput('2')">2</button>
+                       <button ng-click="updateInput('3')">3</button>
+                       <button ng-click="calculateIt('-')"><i class="fa fa-minus"></i></button>
+                   </div>
+                   <div>
+                      <button id="zerobtn" ng-click="updateInput('0')">0</button>
+                      <button ng-click="updateInput('.')">.</button>
+                      <button ng-click="calculateIt('+')"><i class="fa fa-plus"></i></button>
+                      <button id="clearbtn" ng-click="clearBox()">Clear</button>
+                  </div>
+                  
+               </div>
+              
+           </form>
+        </div>
+        <!-- <div> 
+        spitting out values here for testing
+                   {{calcValue}} <br/>
+                   {{operand}}<br/>
+                   {{currentOperator}}
+        </div>-->
+    </div>
+</div>
+
+
+<script>
+angular.module('calculatorApp',[])
+    .controller('calculatorCtrl', function($scope, calcService){
+        $scope.calcValue = "";
+        
+        $scope.updateInput = function(value){
+            $scope.calcValue = calcService.update($scope.calcValue, value);
+        };
+
+        $scope.calculateIt = function (operator) {
+            $scope.calcValue = calcService.calculate(operator, $scope.calcValue);
+        };/
+        
+        $scope.clearBox = function(){
+            $scope.calcValue = calcService.clear();
+        }
+
+    })
+    .service('calcService', function (){
+         var operand =  '';
+         var storedOperator = '';
+      
+         return {
+         
+           /**update
+           * concatenate entered values
+           *@param boxValue string from input box
+           *@param entered character to concatenate onto boxValue
+           * must be numerical or the decmal point
+           *@return new string to display in input box
+           */
+            update: function(boxValue, entered){
+               if(storedOperator === '='){
+                 boxValue = '';
+                 storedOperator = '';
+               }
+               if(Number(entered) || entered === '.' || entered === '0'){
+                  boxValue += entered;
+               }
+               return boxValue;
+            },
+            /**clear
+            * clear all stored values
+            * @return empty string to clear input box value
+            */
+            clear: function(){
+               operand = '';
+               storedOperator = '';
+               return '';
+
+            },
+            /** calculate
+            * performs requested calculation, stores working value 
+            * and most recent operator entered
+            *@param operator character literal of operator 
+            *@param boxValue string from input box
+            *@return boxvalue, string to be displayed in input box
+            */
+            calculate: function(operator, boxValue){
+            //if we're starting a new calculation, store both operator and new operand
+               if(storedOperator === ''|| operand === ''){
+                    if(boxValue !== ''){
+                        storedOperator = operator;
+                        operand = boxValue;
+                        boxValue = '';
+                    }
+                }
+               //otherwise, perform requested calculation based on stored operator
+                else{
+                if(boxValue !== ''){
+                    switch(storedOperator){
+                        case '+':
+                             operand = Number(operand)+ Number(boxValue);
+                            break;
+                        case '-':
+                             operand = Number(operand)- Number(boxValue);
+                            break;
+                        case '*':
+                             operand = Number(operand)* Number(boxValue);
+                            break;
+                        case '/':
+                             operand = Number(operand)/ Number(boxValue);
+                            break;
+                    };
+                    //store the newest operator pressed 
+                     storedOperator = operator;
+                     //spit out the result of the calculation
+                     boxValue = operand;
+                     //unless the operator we just stored was not the =
+                     if(boxValue === operand && operator !== '='){
+                     //then just clear the input box to await a new value with  
+                     //which to perform the stored operation
+                        boxValue = '';
+                     }
+                  }
+               }
+               return boxValue;
+            }
+         };
+    });
+
+    
+    </script>
+    
+    </body>
+    
+    </html>
