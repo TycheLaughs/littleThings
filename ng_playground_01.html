@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html>
+ <head>
+      <meta charset="utf-8">
+      <link rel= "stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css"/>
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+      <script src="//code.angularjs.org/1.4.1/angular.js"></script>
+   </head>
+   <body>
+   
+   <style>
+      #editingTodo{
+         font-weight: bold;
+      }
+      #todoList{
+         min-height:30vh;
+      }
+      input[type=checkbox], input[type=radio] .box{
+         margin: 0 1em 0 0;
+
+      }
+      .input-group{
+         margin-top:1em;
+         margin-bottom:1em;
+      }
+      .prettyDate{
+         font-size: .9em;
+         color: gray;
+         float:right;
+      }
+      .header, .footer{
+         background-color: lavender;
+         height:2.2em;
+         padding:.2em;
+         
+      }
+      .footer{
+         position:fixed;
+         top: 96vh;
+         width:100%;
+      }
+      .leftTopBox{
+         height:30vh;
+      }
+      .tinyIndent{
+         margin-left:1.2em;
+      }
+      .replacer{
+         top:90%;
+         position:relative;
+         margin-left:1em;
+      }
+      a{
+         cursor:pointer;
+      }
+   </style>
+         <div class="container-fluid" ng-app="dashApp">
+           <header></header>
+            <div class="row">
+               <div class="col-xs-10 col-sm-6" ng-app="coffeeManagerApp"ng-controller="coffeeCtrl">
+                  <div class="row leftTopBox">
+                  <div class="replacer" ng-if="hideToggle">
+                  <a ng-click="toggleditor()">Modify Beverage List</a>
+                  </div>
+                  <div class="replacer" ng-if="!hideToggle">
+                  <a ng-click="toggleditor()">Hide Beverage Editor</a>
+                  </div>
+                  <form ng-if="!hideToggle">
+                     <ul class="list-unstyled">[
+                        <li class= "tinyIndent" ng-repeat="item in beverages track by $index">{{item|json}}<span ng-if="$index !== beverages.length -1">,</span></li>
+                        ]
+                     </ul>
+                     <label>drink <input type="text" ng-model="drink" ng-blur="updateCaffeine()"/></label>
+                     <label>drink type <input type="text" ng-model="drinkType" ng-blur="updateCaffeine()"/>
+                     <label>price <input type="text" ng-model="drinkPrice" ng-blur="updateCaffeine()"/>
+                     <label>caffeine <input type="text" ng-model="drinkCaff" ng-blur="updateCaffeine()"/>
+                  </form>
+                  </div>
+                  <div class="row" >
+                     <div class="col-xs-10 col-xs-offset-1">
+                        <h2>Productivity Tips:</h2>
+                        <h3>Have Some Overpriced Caffeine</h3>
+                        <form>
+                           <label>cheapest<input type="radio" ng-model="sortDrinks" value="price"/></label>
+                           <label> coffee first<input type="radio" ng-model="sortDrinks" value="type"/></label>
+                           <label> caffeine<input type="radio" ng-model="sortDrinks" value="!caffRating" checked /></label>
+                        </form>
+                        <ul >
+                           <li ng-repeat="item in beverages | orderBy: sortDrinks | limitTo:4">{{item.drink|uppercase}} can be bought for: {{item.price | currency }}</li>
+                        </ul>
+                     </div>
+                  </div>
+               </div>
+               <div class="col-xs-10 col-sm-5 col-sm-offset-1">
+                  <div class="row text-center" ng-app="ToDoApp">
+                     <div class="col-xs-10 col-xs-offset-1">            
+                        <h2 title="You can add items using the enter key.">Today's To-Do's:</h2>
+                        <div class="row">  	
+                           <div class="col-xs-12" id="wrapper" ng-controller="todoCtrl">
+                               <!-- there was a form tag wrapping this, but JSFiddle didn't like it-->
+                              <div class="input-group">
+                                    <span class="input-group-btn">
+                                       <button id="btn-clear" ng-hide="!list.length" class="btn btn-danger " title="Clear List" ng-click="clearList()"><i class="fa fa-trash-o"></i>  Clear</button>
+                                    </span>
+                                    <input id="input-todo" placeholder="What needs doing?" type="text" class="form-control" ng-model="inp" ng-keydown="pressedKey($event)"/>
+                                    <span class="input-group-btn">
+                                       <button type = "button" id="btn-add" class="btn btn-primary " title='Add Item' name="Add" value="Add" ng-click="createTask()"><i class="fa fa-pencil"></i> Add</button>
+                                    </span>                 
+                                    <span class="input-group-btn">
+                                       <button id="btn-remove" ng-hide="(!list.length) || (list.length && !list.some(findChecked))" class="btn btn-warning" title="Remove Checked Items" ng-click="removeChecked()"><i class="fa fa-minus-square-o"></i> Remove Item</button>
+                                    </span>
+                                 </div>   
+                              <div class="row">
+                                 <div id="todoList" class="col-xs-12 col-sm-10 col-sm-offset-1">
+                                 <!--show what list item we're creating as if it's part of the actual list-->
+                                    <ul id="todos" ng-repeat="item in list track by $index" class="text-left list-unstyled">
+                                       <li><input ng-if="item.done"type="checkbox" checked ng-click="checkToggler($index)"/><input type="checkbox" ng-if="!item.done" ng-click="checkToggler($index)"/>{{item.text}} <span class="prettyDate">added:{{item.created | date: 'short'|lowercase}}</span></li>    
+                                    </ul>
+                                    <ul id="showCurrent" ng-if="inp.length" class="text-left list-unstyled">
+                                       <li id="editingTodo" ><input type="checkbox" /><span ng-bind="inp"></span></li>
+                                    </ul>  
+                                 </div> 
+                              </div>                              
+                           </div>
+                        </div>
+                     </div>
+                  </div>   
+               </div>
+               <div class="col-xs-10 col-sm-5 col-sm-offset-1">
+                  Gratuitous filters of variying obnoxiousness:
+                  <form>
+                     <label>Switchcase: <input type="text" ng-model="caseSwitcher" ng-init="caseSwitcher = ' '"/></label>
+                     <p>{{caseSwitcher | switchcase}}</p>
+                     <label title="Use '_' , <space> , or '-' as delimeters">Camelcase: <input type="text" ng-model="camel" ng-init="camel = ' '"/></label>
+                     <p>{{camel | camelcase}}</p>
+                  </form>
+               </div>
+            </div>       
+            
+            <footer></footer>
+         </div>
+      <script>
+      angular.module('ToDoApp', [])
+         .controller('todoCtrl', function($scope){
+            $scope.list = [];
+           
+            $scope.findChecked = function(element, index, array){
+            return element.done == true;
+         };
+         
+         $scope.pressedKey = function(e){
+            if(e.which== 13){
+               $scope.createTask();
+               return;
+            }
+         };
+         
+         $scope.createTask = function(){
+            var task = {};
+            var text = $scope.inp.trim();
+            if(text !== ''){
+               task.text = text;
+               task.done = false;
+               task.created = new Date();
+               $scope.list.push(task);
+            }
+            $scope.inp = '';
+            //$scope.inp is the input box used as a model for the task preview
+         };
+         
+         $scope.checkToggler = function(index){
+            if($scope.list[index].done === true){
+                $scope.list[index].done = false;
+            }
+            else {
+               $scope.list[index].done = true;
+            }
+         };
+         
+         $scope.removeChecked = function(){
+            console.log('removing checked items...');
+            var initialLength = $scope.list.length;
+            for(i = initialLength-1; i >= 0; i--){
+               if($scope.list[i].done == true){
+                  $scope.list.splice(i, 1);
+                 
+               } 
+            }
+         };
+         
+         $scope.clearList = function(){
+            console.log('clearing list...');
+            while($scope.list.length > 0){
+               $scope.list.pop();
+            }
+            setTimeout(function(){
+            document.getElementById('input-todo').focus();
+            }, 500);
+         };
+         
+      });
+      </script>
+      <script>
+      angular.module('coffeeManagerApp', [])
+         .controller('coffeeCtrl', function($scope){
+         $scope.hideToggle = true;
+         $scope.drink = '';
+         $scope.drinkType = '';
+         $scope.drinkPrice = '';
+         $scope.drinkCaff = '';
+            $scope.beverages = [
+               {
+                  "drink":"Espresso",
+                  "type":"coffee",
+                  "price":"6",
+                  "caffRating":"8"
+               },
+               {
+                  "drink":"Coffee",
+                  "type":"coffee",
+                  "price":"4.35",
+                  "caffRating":"6"
+               },
+               {
+                  "drink":"Green Tea",
+                  "type":"tea",
+                  "price":"4",
+                  "caffRating":"2"
+               },
+               {
+                  "drink":"Black Tea",
+                  "type":"tea",
+                  "price":"3",
+                  "caffRating":"4"
+               },
+               {
+                  "drink":"Soda",
+                  "type":"soda",
+                  "price":"2",
+                  "caffRating":""
+               }
+               
+            ]; 
+            
+            $scope.updateCaffeine = function(){
+               if($scope.drink !== '' && $scope.drinkType !== '' && $scope.drinkPrice !== '' && $scope.drinkCaff !== ''){
+                  var drinkydrink = {};
+                  drinkydrink.drink = $scope.drink;
+                  drinkydrink.type = $scope.drinkType;
+                  drinkydrink.price = $scope.drinkPrice;
+                  drinkydrink.caffRating = $scope.drinkCaff;
+                  $scope.beverages.push(drinkydrink);
+                  $scope.drink ='';
+                  $scope.drinkPrice ='';
+                  $scope.drinkType ='';
+                  $scope.drinkCaff ='';
+               }
+            
+            
+            };
+            $scope.toggleditor = function(){
+               if($scope.hideToggle == true){
+                  $scope.hideToggle = false;
+               }
+               else{
+                  $scope.hideToggle = true;
+               }
+            };
+         });
+      </script>
+      
+      <script>
+      angular.module('dashApp', ['ToDoApp', 'coffeeManagerApp']).
+         controller('dashCtrl', function($scope){
+            $scope.enteredName = '';
+            $scope.vanishTheBox = false;
+            $scope.nameLength = function(){
+               if($scope.enteredName.length > 0){
+               $scope.vanishTheBox = true;
+               }
+            };
+            
+         })
+         .directive('header', function(){
+               return{
+                  restrict: 'E',
+                  replace: true,
+                  template:'<div class="header text-center row"><span class=col-xs-5"><span ng-show="vanishTheBox">Hello,</span> {{enteredName}}</span><form ng-show="!vanishTheBox" class="col-xs-6 pull-right"><label>Your name:<input type="text" ng-model="enteredName"  ng-blur="vanishTheBox = true" autofocus/></label></form></div>'
+               };
+         })
+         .directive('footer', function(){
+            return{
+                  restrict: 'E',
+                  replace: true,
+                  template:'<div class="footer text-center row"><span class=col-xs-5">Footer Text</span></div>'
+               };
+         })
+         .filter('switchcase', function(){
+            return function(string){
+               var switchedText='';
+               var swapLogic = false;
+               if(string.trim() !== ''){
+                  for(i = 0; i< string.length; i++){
+                     if(string[i] === ' '){
+                        swapLogic = true
+                     }
+                     if(!swapLogic){
+                        if(i % 2){
+                           switchedText+= string[i].toUpperCase();
+                        }
+                        else{
+                           switchedText+= string[i].toLowerCase();
+                        }
+                     }
+                     else{
+                        if(i % 2){
+                           switchedText+= string[i].toLowerCase();
+                        }
+                        else{
+                           switchedText+= string[i].toUpperCase();
+                        }
+                     }
+                  }
+               }
+               return switchedText;
+            }
+         })
+         .filter('camelcase', function(){
+            return function(string){
+               var j=0;
+               var foundSpace = false;
+               var cameledString = '';
+               if(string.trim() !== ''){
+                   for(i = 0; i< string.length; i++, j++){
+                        if(foundSpace){
+                           if(string[i] !== ' ' && string[i] !== '-' && string[i] !== '_'){
+                              cameledString += string[i].toUpperCase();
+                              foundSpace = false;
+                           }  
+                        }
+                     else{
+                        if(string[i] !== ' ' && string[i] !== '-' && string[i] !== '_'){
+                           cameledString += string[i];
+                        }
+                        else{
+                           foundSpace = true;
+                        }
+                     }
+                  }
+               }
+               return cameledString;
+               
+            }
+         
+         });
+
+
+      </script>
+   </body>
+</html>
