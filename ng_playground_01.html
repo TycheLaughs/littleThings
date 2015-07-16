@@ -40,7 +40,7 @@
          width:100%;
       }
       .leftTopBox{
-         height:30vh;
+         height:35vh;
       }
       .tinyIndent{
          margin-left:1.2em;
@@ -53,92 +53,103 @@
       a{
          cursor:pointer;
       }
+      #coffeeEditorList{
+         overflow-y:scroll;
+         height:30vh;
+      }
+      #coffeeList{
+         top:10vh;
+      }
    </style>
-         <div class="container-fluid" ng-app="dashApp">
-           <header></header>
-            <div class="row">
-               <div class="col-xs-10 col-sm-6" ng-app="coffeeManagerApp"ng-controller="coffeeCtrl">
-                  <div class="row leftTopBox">
-                  <div class="replacer" ng-if="hideToggle">
+   <div class="container-fluid" ng-app="dashApp">
+     <header></header>
+      <div class="row">
+         <div class="col-xs-10 col-sm-6" ng-app="coffeeManagerApp"ng-controller="coffeeCtrl">
+            <div class="row leftTopBox">
+               <div class="replacer" ng-show="hideToggle">
                   <a ng-click="toggleditor()">Modify Beverage List</a>
-                  </div>
-                  <div class="replacer" ng-if="!hideToggle">
-                  <a ng-click="toggleditor()">Hide Beverage Editor</a>
-                  </div>
-                  <form ng-if="!hideToggle">
-                     <ul class="list-unstyled">[
-                        <li class= "tinyIndent" ng-repeat="item in beverages track by $index">{{item|json}}<span ng-if="$index !== beverages.length -1">,</span></li>
-                        ]
-                     </ul>
-                     <label>drink <input type="text" ng-model="drink" ng-blur="updateCaffeine()"/></label>
-                     <label>drink type <input type="text" ng-model="drinkType" ng-blur="updateCaffeine()"/>
-                     <label>price <input type="text" ng-model="drinkPrice" ng-blur="updateCaffeine()"/>
-                     <label>caffeine <input type="text" ng-model="drinkCaff" ng-blur="updateCaffeine()"/>
-                  </form>
-                  </div>
-                  <div class="row" >
-                     <div class="col-xs-10 col-xs-offset-1">
-                        <h2>Productivity Tips:</h2>
-                        <h3>Have Some Overpriced Caffeine</h3>
-                        <form>
-                           <label>cheapest<input type="radio" ng-model="sortDrinks" value="price"/></label>
-                           <label> coffee first<input type="radio" ng-model="sortDrinks" value="type"/></label>
-                           <label> caffeine<input type="radio" ng-model="sortDrinks" value="!caffRating" checked /></label>
-                        </form>
-                        <ul >
-                           <li ng-repeat="item in beverages | orderBy: sortDrinks | limitTo:4">{{item.drink|uppercase}} can be bought for: {{item.price | currency }}</li>
-                        </ul>
-                     </div>
-                  </div>
                </div>
-               <div class="col-xs-10 col-sm-5 col-sm-offset-1">
-                  <div class="row text-center" ng-app="ToDoApp">
-                     <div class="col-xs-10 col-xs-offset-1">            
-                        <h2 title="You can add items using the enter key.">Today's To-Do's:</h2>
-                        <div class="row">  	
-                           <div class="col-xs-12" id="wrapper" ng-controller="todoCtrl">
-                               <!-- there was a form tag wrapping this, but JSFiddle didn't like it-->
-                              <div class="input-group">
-                                    <span class="input-group-btn">
-                                       <button id="btn-clear" ng-hide="!list.length" class="btn btn-danger " title="Clear List" ng-click="clearList()"><i class="fa fa-trash-o"></i>  Clear</button>
-                                    </span>
-                                    <input id="input-todo" placeholder="What needs doing?" type="text" class="form-control" ng-model="inp" ng-keydown="pressedKey($event)"/>
-                                    <span class="input-group-btn">
-                                       <button type = "button" id="btn-add" class="btn btn-primary " title='Add Item' name="Add" value="Add" ng-click="createTask()"><i class="fa fa-pencil"></i> Add</button>
-                                    </span>                 
-                                    <span class="input-group-btn">
-                                       <button id="btn-remove" ng-hide="(!list.length) || (list.length && !list.some(findChecked))" class="btn btn-warning" title="Remove Checked Items" ng-click="removeChecked()"><i class="fa fa-minus-square-o"></i> Remove Item</button>
-                                    </span>
-                                 </div>   
-                              <div class="row">
-                                 <div id="todoList" class="col-xs-12 col-sm-10 col-sm-offset-1">
-                                 <!--show what list item we're creating as if it's part of the actual list-->
-                                    <ul id="todos" ng-repeat="item in list track by $index" class="text-left list-unstyled">
-                                       <li><input ng-if="item.done"type="checkbox" checked ng-click="checkToggler($index)"/><input type="checkbox" ng-if="!item.done" ng-click="checkToggler($index)"/>{{item.text}} <span class="prettyDate">added:{{item.created | date: 'short'|lowercase}}</span></li>    
-                                    </ul>
-                                    <ul id="showCurrent" ng-if="inp.length" class="text-left list-unstyled">
-                                       <li id="editingTodo" ><input type="checkbox" /><span ng-bind="inp"></span></li>
-                                    </ul>  
-                                 </div> 
-                              </div>                              
-                           </div>
+               <div class="replacer" ng-show="!hideToggle">
+                  <a ng-click="toggleditor()">Hide Beverage Editor</a>
+               </div>
+               <form  id="coffeeEditor" ng-show="!hideToggle">
+                  <ul class="list-unstyled" id="coffeeEditorList">[
+                     <li class= "tinyIndent" ng-repeat="item in beverages track by $index">{{item|json}}<span ng-if="$index !== beverages.length -1">,</span></li>
+                     ]
+                  </ul>
+                  <label>drink <input type="text" ng-model="drink" ng-blur="updateCaffeine()"/></label>
+                  <label>drink type <input type="text" ng-model="drinkType" ng-blur="updateCaffeine()"/>
+                  <label>price <input type="text" ng-model="drinkPrice" ng-blur="updateCaffeine()"/>
+                  <label>caffeine <input type="text" ng-model="drinkCaff" ng-blur="updateCaffeine()"/>
+               </form>
+            </div>
+            <div class="row">
+               <div id="coffeeList"class="col-xs-10 col-xs-offset-1">
+                  <h2>Productivity Tips:</h2>
+                  <h3>Have Some Overpriced Caffeine</h3>
+                  <form>
+                     <label>cheapest<input type="radio" ng-model="sortDrinks" value="price"/></label>
+                     <label> coffee first<input type="radio" ng-model="sortDrinks" value="type"/></label>
+                     <label> caffeine<input type="radio" ng-model="sortDrinks" value="!caffRating" checked /></label>
+                  </form>
+                  <ul >
+                     <li ng-repeat="item in beverages | orderBy: sortDrinks | limitTo:4">{{item.drink|uppercase}} can be bought for: {{item.price | currency }}</li>
+                  </ul>
+               </div>
+            </div>
+         </div>
+         <div class="col-xs-10 col-sm-5 col-sm-offset-1">
+               <div class="row text-center" ng-app="ToDoApp">
+                  <div class="col-xs-10 col-xs-offset-1">            
+                     <h2 title="You can add items using the enter key.">Today's To-Do's:</h2>
+                     <div class="row">  	
+                        <div class="col-xs-12" id="wrapper" ng-controller="todoCtrl">
+                            <!-- there was a form tag wrapping this, but JSFiddle didn't like it-->
+                           <div class="input-group">
+                                 <span class="input-group-btn">
+                                    <button id="btn-clear" ng-hide="!list.length" class="btn btn-danger " title="Clear List" ng-click="clearList()"><i class="fa fa-trash-o"></i>  Clear</button>
+                                 </span>
+                                 <input id="input-todo" placeholder="What needs doing?" type="text" class="form-control" ng-model="inp" ng-keydown="pressedKey($event)"/>
+                                 <span class="input-group-btn">
+                                    <button type = "button" id="btn-add" class="btn btn-primary " title='Add Item' name="Add" value="Add" ng-click="createTask()"><i class="fa fa-pencil"></i> Add</button>
+                                 </span>                 
+                                 <span class="input-group-btn">
+                                    <button id="btn-remove" ng-hide="(!list.length) || (list.length && !list.some(findChecked))" class="btn btn-warning" title="Remove Checked Items" ng-click="removeChecked()"><i class="fa fa-minus-square-o"></i> Remove Item</button>
+                                 </span>
+                              </div>   
+                           <div class="row">
+                              <div id="todoList" class="col-xs-12 col-sm-10 col-sm-offset-1">
+                              <!--show what list item we're creating as if it's part of the actual list-->
+                                 <ul id="todos" ng-repeat="item in list track by $index" class="text-left list-unstyled">
+                                    <li><input ng-if="item.done"type="checkbox" checked ng-click="checkToggler($index)"/><input type="checkbox" ng-if="!item.done" ng-click="checkToggler($index)"/>{{item.text}} <span class="prettyDate">added:{{item.created | date: 'short'|lowercase}}</span></li>    
+                                 </ul>
+                                 <ul id="showCurrent" ng-if="inp.length" class="text-left list-unstyled">
+                                    <li id="editingTodo" ><input type="checkbox" /><span ng-bind="inp"></span></li>
+                                 </ul>  
+                              </div> 
+                           </div>                              
                         </div>
                      </div>
-                  </div>   
-               </div>
-               <div class="col-xs-10 col-sm-5 col-sm-offset-1">
-                  Gratuitous filters of variying obnoxiousness:
-                  <form>
-                     <label>Switchcase: <input type="text" ng-model="caseSwitcher" ng-init="caseSwitcher = ' '"/></label>
-                     <p>{{caseSwitcher | switchcase}}</p>
-                     <label title="Use '_' , <space> , or '-' as delimeters">Camelcase: <input type="text" ng-model="camel" ng-init="camel = ' '"/></label>
-                     <p>{{camel | camelcase}}</p>
-                  </form>
-               </div>
-            </div>       
-            
-            <footer></footer>
+                  </div>
+               </div>   
+            </div>
+         <div class="col-xs-10 col-sm-5 col-sm-offset-1">
+            Gratuitous filters:
+            <form>
+               <label>Switchcase: <input type="text" ng-model="caseSwitcher" ng-init="caseSwitcher = ' '"/></label>
+               <p>{{caseSwitcher | switchcase}}</p>
+               <label title="Use '_' , <space> , or '-' as delimeters">Camelcase: <input type="text" ng-model="camel" ng-init="camel = ' '"/></label>
+               <p>{{camel | camelcase}}</p>
+               <label>Sentence case: <input type="text" ng-model="sentenceCaser" ng-init="sentenceCaser = ' '"/></label>
+               <p>{{sentenceCaser | sentencecase}}</p>
+               <label>Startcase: <input type="text" ng-model="startCaser" ng-init="startCaser = ' '"/></label>
+               <p>{{startCaser | startcase}}</p>
+            </form>
          </div>
+      </div>       
+         
+         <footer></footer>
+      </div>
       <script>
       angular.module('ToDoApp', [])
          .controller('todoCtrl', function($scope){
@@ -298,27 +309,35 @@
          .filter('switchcase', function(){
             return function(string){
                var switchedText='';
-               var swapLogic = false;
+               var swapLogic = 0;
+               var foundSpace = false;
                if(string.trim() !== ''){
                   for(i = 0; i< string.length; i++){
+                  foundSpace = false;
                      if(string[i] === ' '){
-                        swapLogic = true
+                        swapLogic ++;
+                        foundSpace = true;
                      }
-                     if(!swapLogic){
-                        if(i % 2){
-                           switchedText+= string[i].toUpperCase();
+                     if(!foundSpace){
+                        if(swapLogic%2){
+                           if(i % 2){
+                              switchedText+= string[i].toUpperCase();
+                           }
+                           else{
+                              switchedText+= string[i].toLowerCase();
+                           }
                         }
                         else{
-                           switchedText+= string[i].toLowerCase();
+                           if(i % 2){
+                              switchedText+= string[i].toLowerCase();
+                           }
+                           else{
+                              switchedText+= string[i].toUpperCase();
+                           }
                         }
                      }
                      else{
-                        if(i % 2){
-                           switchedText+= string[i].toLowerCase();
-                        }
-                        else{
-                           switchedText+= string[i].toUpperCase();
-                        }
+                        switchedText += string[i];
                      }
                   }
                }
@@ -350,6 +369,68 @@
                }
                return cameledString;
                
+            }
+         
+         })
+         .filter('startcase',function(){
+            return function(string){
+               var foundPunc = true;
+               var startString = '';
+               if(string.trim() !== ''){
+                   for(i = 0; i< string.length; i++){
+                        if(foundPunc){
+                           if(string[i] !== ' ' && string[i] !== '.' && string[i] !== '?' && string[i] !== '!'){
+                              startString += string[i].toUpperCase();
+                              foundPunc = false;
+                           }
+                           else{
+                              startString += string[i];
+                           }
+                           
+                           
+                        }
+                     else{
+                        startString += string[i];
+                        if(string[i] === '.' || string[i] === ' '||string[i] === '?' || string[i] === '!'){
+                           foundPunc = true;
+                        }
+                        
+                     }
+                  }
+               }
+               return startString;
+            
+            }
+         
+         })
+         .filter('sentencecase',function(){
+            return function(string){
+               var foundPunc = true;
+               var sentenceString = '';
+               if(string.trim() !== ''){
+                   for(i = 0; i< string.length; i++){
+                        if(foundPunc){
+                           if(string[i] !== ' ' && string[i] !== '.' && string[i] !== '?' && string[i] !== '!'){
+                              sentenceString += ' '+ string[i].toUpperCase();
+                              foundPunc = false;
+                           }
+                           else{
+                              sentenceString += string[i];
+                           }
+                           
+                           
+                        }
+                     else{
+                        sentenceString += string[i];
+                        if(string[i] === '.' || string[i] === '?' || string[i] === '!'){
+                           foundPunc = true;
+                        }
+                        
+                     }
+                  }
+               }
+               return sentenceString;
+            
             }
          
          });
