@@ -1,0 +1,157 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width">
+    <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+    <!-- build:css(.) styles/vendor.css -->
+    <!-- bower:css -->
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" />
+    <!-- endbower -->
+    <!-- endbuild -->
+    <!-- build:css(.tmp) styles/main.css -->
+    <link rel="stylesheet" href="styles/main.css">
+    <!-- endbuild -->
+  </head>
+  <body ng-app="fooApp">
+    <!--[if lte IE 8]>
+      <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+    <![endif]-->
+
+    <!-- Add your site or application content here -->
+    <div class="container-fluid">
+      <header></header>
+      <div class="row">
+        <div class="col-xs-10 col-sm-6" ng-controller="coffeeCtrl">
+          <div class="row leftTopBox">
+            <div class="replacer" ng-show="hideToggle">
+              <a ng-click="toggleditor()">Modify Beverage List</a>
+            </div>
+            <div class="replacer" ng-show="!hideToggle">
+              <a ng-click="toggleditor()">Hide Beverage Editor</a>
+            </div>
+            <form  id="coffeeEditor" ng-show="!hideToggle">
+              <ul class="list-unstyled" id="coffeeEditorList">[
+                <li class= "tinyIndent" ng-repeat="item in beverages track by $index">{{item|json}}<span ng-if="$index !== beverages.length -1">,</span></li>
+                ]
+              </ul>
+              <label>drink <input type="text" ng-model="drink" ng-blur="updateCaffeine()"/></label>
+              <label>drink type <input type="text" ng-model="drinkType" ng-blur="updateCaffeine()"/></label>
+                <label>price <input type="text" ng-model="drinkPrice" ng-blur="updateCaffeine()"/></label>
+                  <label>caffeine <input type="text" ng-model="drinkCaff" ng-blur="updateCaffeine()"/></label>
+            </form>
+          </div>
+          <div class="row">
+            <div id="coffeeList"class="col-xs-10 col-xs-offset-1">
+              <h2>Productivity Tips:</h2>
+              <h3>Have Some Overpriced Caffeine</h3>
+              <form>
+                <label>cheapest<input type="radio" ng-model="sortDrinks" value="price"/></label>
+                <label> coffee first<input type="radio" ng-model="sortDrinks" value="type"/></label>
+                <label> caffeine<input type="radio" ng-model="sortDrinks" value="!caffRating" checked /></label>
+              </form>
+              <ul >
+                <li ng-repeat="item in beverages | orderBy: sortDrinks | limitTo:4">{{item.drink|uppercase}} can be bought for: {{item.price | currency }}</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="col-xs-10 col-sm-5 col-sm-offset-1">
+          <div class="row text-center"ng-controller="todoCtrl">
+            <div class="col-xs-10 col-xs-offset-1">
+              <h2 title="You can add items using the enter key.">Today's To-Do's:</h2>
+              <div class="row">
+                <div class="col-xs-12" id="wrapper" >
+                 <form> <!-- there was a form tag wrapping this, but JSFiddle didn't like it-->
+                    <div class="input-group">
+                       <span class="input-group-btn">
+                          <button id="btn-clear" ng-hide="!list.length" class="btn btn-danger " title="Clear List" ng-click="clearList()"><i class="fa fa-trash-o"></i>  Clear</button>
+                       </span>
+                       <input id="input-todo" placeholder="What needs doing?" type="text" class="form-control" ng-model="inp" ng-keydown="pressedKey($event)"/>
+                       <span class="input-group-btn">
+                          <button type = "button" id="btn-add" class="btn btn-primary " title='Add Item' name="Add" value="Add" ng-click="createTask()"><i class="fa fa-pencil"></i> Add</button>
+                       </span>
+                       <span class="input-group-btn">
+                          <button id="btn-remove" ng-hide="(!list.length) || (list.length && !list.some(findChecked))" class="btn btn-warning" title="Remove Checked Items" ng-click="removeChecked()"><i class="fa fa-minus-square-o"></i> Remove Item</button>
+                       </span>
+                    </div>
+                 </form>
+                </div>
+                <div class="row">
+                  <div id="todoList" class="col-xs-12 col-sm-10 col-sm-offset-1">
+                    <!--show what list item we're creating as if it's part of the actual list-->
+                    <ul id="todos" ng-repeat="item in list track by $index" class="text-left list-unstyled">
+                      <li><input ng-if="item.done"type="checkbox" checked ng-click="checkToggler($index)"/><input type="checkbox" ng-if="!item.done" ng-click="checkToggler($index)"/>{{item.text}} <span class="prettyDate">added:{{item.created | date: 'short'|lowercase}}</span></li>
+                    </ul>
+                    <ul id="showCurrent" ng-if="inp.length" class="text-left list-unstyled">
+                      <li id="editingTodo" ><input type="checkbox" /><span ng-bind="inp"></span></li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-xs-10 col-sm-5 col-sm-offset-1">
+          Gratuitous filters:
+          <form>
+            <label>Switchcase: <input type="text" ng-model="caseSwitcher" ng-init="caseSwitcher = ' '"/></label>
+            <p>{{caseSwitcher | switchcase}}</p>
+            <label title="Use '_' , <space> , or '-' as delimeters">Camelcase: <input type="text" ng-model="camel" ng-init="camel = ' '"/></label>
+            <p>{{camel | camelcase}}</p>
+            <label>Sentence case: <input type="text" ng-model="sentenceCaser" ng-init="sentenceCaser = ' '"/></label>
+            <p>{{sentenceCaser | sentencecase}}</p>
+            <label>Startcase: <input type="text" ng-model="startCaser" ng-init="startCaser = ' '"/></label>
+            <p>{{startCaser | startcase}}</p>
+          </form>
+        </div>
+      </div>
+
+      <footer></footer>
+    </div>
+
+    <!-- Google Analytics: change UA-XXXXX-X to be your site's ID -->
+     <script>
+       !function(A,n,g,u,l,a,r){A.GoogleAnalyticsObject=l,A[l]=A[l]||function(){
+       (A[l].q=A[l].q||[]).push(arguments)},A[l].l=+new Date,a=n.createElement(g),
+       r=n.getElementsByTagName(g)[0],a.src=u,r.parentNode.insertBefore(a,r)
+       }(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+       ga('create', 'UA-XXXXX-X');
+       ga('send', 'pageview');
+    </script>
+
+    <!-- build:js(.) scripts/vendor.js -->
+    <!-- bower:js -->
+    <script src="bower_components/jquery/dist/jquery.js"></script>
+    <script src="bower_components/angular/angular.js"></script>
+    <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
+    <script src="bower_components/angular-animate/angular-animate.js"></script>
+    <script src="bower_components/angular-cookies/angular-cookies.js"></script>
+    <script src="bower_components/angular-resource/angular-resource.js"></script>
+    <script src="bower_components/angular-route/angular-route.js"></script>
+    <script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
+    <script src="bower_components/angular-touch/angular-touch.js"></script>
+    <!-- endbower -->
+    <!-- endbuild -->
+
+        <!-- build:js({.tmp,app}) scripts/scripts.js -->
+        <script src="scripts/app.js"></script>
+        <script src="scripts/controllers/main.js"></script>
+        <script src="scripts/controllers/about.js"></script>
+        <script src="scripts/filters/switchcase.js"></script>
+        <script src="scripts/directives/header.js"></script>
+        <script src="scripts/controllers/coffee.js"></script>
+        <script src="scripts/controllers/dash.js"></script>
+        <script src="scripts/controllers/todo.js"></script>
+        <script src="scripts/directives/footer.js"></script>
+        <script src="scripts/filters/camelcase.js"></script>
+        <script src="scripts/filters/sentencecase.js"></script>
+        <script src="scripts/filters/startcase.js"></script>
+
+          <!-- endbuild -->
+</body>
+</html>

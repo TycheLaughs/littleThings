@@ -1,0 +1,51 @@
+#editingTodo{
+  font-weight: bold;
+}
+#todoList{
+  min-height:30vh;
+}
+input[type=checkbox], input[type=radio] .box{
+  margin: 0 1em 0 0;
+
+}
+.input-group{
+  margin-top:1em;
+  margin-bottom:1em;
+}
+.prettyDate{
+  font-size: .9em;
+  color: gray;
+  float:right;
+}
+.header, .footer{
+  background-color: lavender;
+  height:2.2em;
+  padding:.2em;
+
+}
+.footer{
+  position:fixed;
+  top: 96vh;
+  width:100%;
+}
+.leftTopBox{
+  height:35vh;
+}
+.tinyIndent{
+  margin-left:1.2em;
+}
+.replacer{
+  top:90%;
+  position:relative;
+  margin-left:1em;
+}
+a{
+  cursor:pointer;
+}
+#coffeeEditorList{
+  overflow-y:scroll;
+  height:30vh;
+}
+#coffeeList{
+  top:10vh;
+}
